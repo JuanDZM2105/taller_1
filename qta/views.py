@@ -8,6 +8,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import csv
+from qta.services.statistics_service import StatisticsService
+
+
 
 # Create your views here.
 def home(request):
@@ -97,102 +100,7 @@ def ticket(request):
 
 @login_required
 def stadistics(request):
-    # Datos
-    tickets = Ticket.objects.all()
-    x = {}
-    
-    # Grafica #1: Equipo con más reportes #
-    for element in tickets:
-        if element.equipment in x.keys():
-            x[element.equipment] += 1
-        else:
-            x[element.equipment] = 1
-     
-    Max = ("",-1)      
-    for key in x.keys():
-        if x[key] > Max[1]:
-            Max = (key,x[key])
+    service = StatisticsService()
+    stats = service.generate_statistics()
 
-    # Crea la gráfica
-    plt.figure()
-    plt.bar(x.keys(), x.values())
-
-    plt.savefig("graph.jpg")
-    
-    plt.clf()
-    
-    # Grafica #2: Histograma de Prioridades #
-    priorities = [ticket.priority for ticket in tickets]
-
-    df = pd.DataFrame({'priority': priorities})
-    
-    # Crea la gráfica #2: Histograma de Prioridades
-    histogram_data = df['priority'].value_counts()
-    histogram_data.plot(kind='bar', color='skyblue')
-    plt.xlabel('Prioridad')
-    plt.ylabel('Cantidad de Tickets')
-    plt.xticks(rotation=0)
-    plt.savefig("graph2.jpg")
-
-    # Encuentra el valor más alto en el histograma
-    max_priority_value = histogram_data.max()
-    max_priority_name = histogram_data.idxmax()  # Nombre de la prioridad con el valor más alto
-    
-    # Limpio
-    plt.clf()
-    
-    # Grafica #3: Tarta de estados
-    df = pd.DataFrame(tickets.values('call_time', 'state'))
-    fecha_actual = datetime.datetime.now()
-
-    fecha_hace_una_semana = fecha_actual - datetime.timedelta(days=7)
-    fecha_hace_una_semana = pd.to_datetime(fecha_hace_una_semana, utc=True)
-
-    tickets_ultima_semana = df[df['call_time'] >= fecha_hace_una_semana]
-
-    estado_counts = tickets_ultima_semana['state'].value_counts()
-    
-    if not estado_counts.empty:
-        estado_mas_comun = estado_counts.idxmax()
-    else:
-        estado_mas_comun = "No Value"
-
-    plt.pie(estado_counts, labels=estado_counts.index, autopct='%1.1f%%', startangle=140)
-
-    plt.savefig("graph4.jpg")
-    
-    plt.clf()
-    
-    
-    # Grafica 4
-    df = pd.DataFrame(tickets.values('call_time', 'place'))
-    fecha_actual = datetime.datetime.now()
-
-    fecha_hace_una_semana = fecha_actual - datetime.timedelta(days=7)
-    fecha_hace_una_semana = pd.to_datetime(fecha_hace_una_semana, utc=True)
-
-    tickets_ultima_semana = df[df['call_time'] >= fecha_hace_una_semana]
-
-    estado_counts = tickets_ultima_semana['place'].value_counts()
-    
-    plt.barh(estado_counts.index, estado_counts)
-    plt.yticks(rotation=90)
-    
-    if not estado_counts.empty:
-        clinica_mas_comun = estado_counts.idxmax()
-    else:
-        clinica_mas_comun = "No Value"
-    
-
-    plt.savefig("graph5.jpg")
-    
-    plt.clf()
-    
-    tickets = Ticket.objects.all()
-    
-    with open('statistics.csv', "w") as f:
-        f.write(", ".join(['Max_Equipment', 'Max_Priority', 'Max_State', 'Max_Place']) + "; \n")
-        for ticket in tickets:
-            f.write(", ".join([Max[0], max_priority_name, estado_mas_comun, clinica_mas_comun]) + "; \n")
-
-    return render(request, 'stadistics.html', {'Max_Equipment': Max[0], 'Max_Priority' : max_priority_name, 'Max_State': estado_mas_comun, 'Max_Place': clinica_mas_comun})
+    return render(request, 'stadistics.html', stats)
