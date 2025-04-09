@@ -206,83 +206,82 @@
     </header>
 
     <section class="Formulario">
-      <div class="container">
-        <div class="title">Ticket information {{ ticket.id_unico }}</div>
-        <form actions="" method='post'>
-            {% csrf_token %}
-            <input type="hidden" name="id_unico" value="{{ ticket.id_unico }}">
-            <div class="user-details">
-                <div class="input-box">
-                    <span class="details">Contact Name</span>
-                    <input type="text" id="contact_name" name="contact_name" value="{{ ticket.contact_name }}" readonly>
-                </div>
-
-                <div class="input-box">
-                    <span class="details">Contact Number</span>
-                    <input type="text" id="contact_number" name="contact_number" value="{{ ticket.contact_number }}" readonly>
-                </div>
-
-                <div class="input-box">
-                    <span class="details">Call Time</span>
-                    <input type="text" id="call_time" name="call_time" value="{{ ticket.call_time | date:'d-m-Y H:i:s' }}" readonly>
-                </div>
-
-                <div class="input-box">
-                    <span class="details">Discussion</span>
-                    <input type="text" id="discussion" name="discussion" value="{{ ticket.discussion }}" readonly>
-                </div>
-
-                <div class="input-box">
-                    <span class="details">Equipment</span>
-                    <input type="text" id="equipment" name="equipment" value="{{ ticket.equipment }}" readonly>
-                </div>
-
-                <div class="input-box">
-                    <span class="details">Place</span>
-                    <input type="text" id="place" name="place" value="{{ ticket.place }}" readonly>
-                </div>
-
-                <div class="input-box">
-                    <span class="details">Priority</span>
-                    <input type="text" id="priority" name="priority" value="{{ ticket.priority }}" readonly>
-                </div>
-
-                <div class="input-box">
-                    <span class="details">Support name</span>
-                    <input type="text" id="Support_name" name="Support_name" value="{{ ticket.Support_name }}" >
-                </div>
-
-                <div class="input-box">
-                    <span class="details">Fisrt Follow-up: </span>
-                    <input type="text" id="first_follow_up" name="first_follow_up" value="{{ ticket.first_follow_up }}">
-                </div>
-
-                <div class="input-box">
-                    <span class="details">Second Follow-up: </span>
-                    <input type="text" id="second_follow_up" name="second_follow_up" value="{{ ticket.second_follow_up }}">
-                </div>
-
-                <div class="input-box">
-                    <span class="details">Third Follow-up: </span>
-                    <input type="text" id="third_follow_up" name="third_follow_up" value="{{ ticket.third_follow_up }}">
-                </div>
-
-                <div class="input-box">
+        <div class="container">
+          <div class="title">Ticket information {{ ticket.id_unico }}</div>
+      
+          <form method="post">
+              {% csrf_token %}
+              <div class="user-details">
+      
+                  <!-- Campos de solo lectura (no editables) -->
+                  <div class="input-box">
+                      <span class="details">Contact Name</span>
+                      <input type="text" value="{{ ticket.contact_name }}" readonly>
+                  </div>
+      
+                  <div class="input-box">
+                      <span class="details">Contact Number</span>
+                      <input type="text" value="{{ ticket.contact_number }}" readonly>
+                  </div>
+      
+                  <div class="input-box">
+                      <span class="details">Call Time</span>
+                      <input type="text" value="{{ ticket.call_time|date:'d-m-Y H:i:s' }}" readonly>
+                  </div>
+      
+                  <div class="input-box">
+                      <span class="details">Discussion</span>
+                      <input type="text" value="{{ ticket.discussion }}" readonly>
+                  </div>
+      
+                  <div class="input-box">
+                      <span class="details">Equipment</span>
+                      <input type="text" value="{{ ticket.equipment }}" readonly>
+                  </div>
+      
+                  <div class="input-box">
+                      <span class="details">Place</span>
+                      <input type="text" value="{{ ticket.place }}" readonly>
+                  </div>
+      
+                  <div class="input-box">
+                      <span class="details">Priority</span>
+                      <input type="text" value="{{ ticket.priority }}" readonly>
+                  </div>
+      
+                  <!-- Campos editables (dinámicos desde el form de Django) -->
+                  <div class="input-box">
+                      <span class="details">Support Name</span>
+                      {{ form.Support_name }}
+                  </div>
+      
+                  <div class="input-box">
+                      <span class="details">First Follow-up</span>
+                      {{ form.first_follow_up }}
+                  </div>
+      
+                  <div class="input-box">
+                      <span class="details">Second Follow-up</span>
+                      {{ form.second_follow_up }}
+                  </div>
+      
+                  <div class="input-box">
+                      <span class="details">Third Follow-up</span>
+                      {{ form.third_follow_up }}
+                  </div>
+      
+                  <div class="input-box">
                     <span class="details">State</span>
-                    <select class="form-select form-select-sm" aria-label="Small select example" type="text" id="campo5" name="state" required>
-                        <option selected>In progress</option>
-                        <option value="New">New</option>
-                        <option value="In progress">In progress</option>
-                        <option value="Completed">Completed</option>
-                      </select>
-                </div>
-            
-            <div class="pt-1 mb-4">
-                <button type='submit' class="btn btn-dark btn-lg btn-block">Update Ticket</button>
-                <input type="button" class="btn btn-dark btn-lg btn-block" onclick="history.back()" name="Go back" value="Go back">
-             </div>
-        </form>
-      </div>
+                    {{ form.state }}
+                  </div>
+               </div>
+      
+              <div class="pt-1 mb-4">
+                  <button type='submit' class="btn btn-dark btn-lg btn-block">Update Ticket</button>
+                  <input type="button" class="btn btn-dark btn-lg btn-block" onclick="history.back()" value="Go back">
+              </div>    
+          </form>
+        </div>
     </section>
 
 

@@ -1,0 +1,8 @@
+id, support, person, number person, place, equipment, state, priority, discussion, 1, 2, 3; 
+1, Camila Londoño, Camilo Arias, 3003879152, Clinica del Sur, TSH, Completed, Urgent, El TSH tiene valores demasiados bajos en todos los casos, Se llamo al usuario a las 1:45 pm, Se soluciono el problema con una limpiada al equpo, ; 
+2, Luisa Maria gomez, Lopez, Juan Manuel, 3003529152, Hospital General, RQ-22, Completed, Regular, El controlador de insulina RQ-22 esta suministrando más insulina de la establecida, Se llamo al usuario a las 2 pm, sin respuesta, , a; 
+3, , Giraldo, Ana, 3003529000, Centro de Emergencias Medicas, re-34, New, Regular, La bascula re-34 no enciende, , , ; 
+4, Alexis Cuartas, Valeria Giraldo, 3003529100, Clínica del Sur, CARDI2023, Completed, Very important, El marca pasos CARDI2023 se paralizo, se necesita para un cliente, él socorrista guio al equipo de la Clínica para realizar un Análisis para corto circuito, Se Resolvió el problema, era un corto circuito en el Pulsador, ; 
+5, Luisa Maria gomez, Miguel Ángel Gaviria, 3003529110, Clinica del Sur, TSH, Completed, Important, los sistemas de la TSH estan locos, Se llamo al usuario a las 3 pm, sin respuesta, Se soluciono el problema con una limpiada al equpo, ; 
+6, Alexis Cuartas, Camilo Arias, 3003879152, Clinica del Sur, TSH, Completed, Very important, El TSH tiene valores demasiados bajos en todos los casos, Se llamo al usuario a las 2 pm, sin respuesta, , ; 
+7, Luisa Maria gomez, Juan Muñoz, 319292911, Medellín, xTERRA, In progress, Very important, prueba ing software, prueba, Prueba, a; 
