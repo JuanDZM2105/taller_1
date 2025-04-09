@@ -130,3 +130,108 @@ Se aplicó este principio por las siguientes razones:
 - Organización del código en módulos separados para facilitar su mantenimiento.
 
 
+
+---
+
+# Implementación de Patrones de Diseño en el Proyecto de Django
+
+
+## 1. Patrones Implementados
+
+### 1.1 Normalización de Modelos
+
+#### **Decisión detrás del patrón**:
+La **normalización de modelos** se eligió como patrón para mejorar la estructura de los datos en la base de datos, eliminando redundancias y mejorando la integridad de los datos. En el modelo original de `Ticket`, había campos redundantes como `first_follow_up`, `second_follow_up`, y `third_follow_up`, que se podían gestionar de una manera más eficiente mediante la creación de un modelo separado para los seguimientos.
+
+Este patrón fue elegido para garantizar que los datos estuvieran mejor estructurados, con relaciones claras entre los modelos y sin duplicación innecesaria de información. Además, facilita la escalabilidad del sistema, ya que permite agregar más seguimientos sin tener que modificar la estructura del modelo `Ticket`.
+
+#### **Implementación del patrón**:
+- **Modelo Original**: El modelo `Ticket` contenía múltiples campos para almacenar los seguimientos (`first_follow_up`, `second_follow_up`, `third_follow_up`).
+- **Refactorización**: Se creó un nuevo modelo `FollowUp` para manejar los seguimientos de manera más flexible. Cada instancia de `Ticket` ahora tiene múltiples instancias del modelo `FollowUp` relacionadas con él. Esto elimina la redundancia y hace que el sistema sea más fácil de mantener y ampliar en el futuro.
+
+**Código del modelo `FollowUp`:**
+
+```python
+class FollowUp(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name='follow_ups')
+    follow_up_time = models.DateTimeField(default=now)
+    follow_up_text = models.CharField(max_length=500, blank=True, default="")
+    follow_up_type = models.CharField(max_length=50, blank=True, default="")
+```
+
+**Modificaciones en el modelo `Ticket`:**
+
+```python
+class Ticket(models.Model):
+    # Otros campos...
+    first_follow_up = models.ForeignKey('FollowUp', on_delete=models.CASCADE, related_name='first_follow_up', blank=True, null=True)
+    second_follow_up = models.ForeignKey('FollowUp', on_delete=models.CASCADE, related_name='second_follow_up', blank=True, null=True)
+    third_follow_up = models.ForeignKey('FollowUp', on_delete=models.CASCADE, related_name='third_follow_up', blank=True, null=True)
+```
+
+#### **Mejora en la implementación**:
+La creación del modelo `FollowUp` permite que los seguimientos sean gestionados de manera más eficiente y flexible. Si en el futuro se requieren más seguimientos, solo será necesario agregar más instancias del modelo `FollowUp`, sin necesidad de modificar la estructura del modelo `Ticket`.
+
+---
+
+### 1.2 Vistas CRUD para Controladores
+
+#### **Decisión detrás del patrón**:
+El patrón **CRUD para controladores** se eligió porque las vistas de la aplicación siguen un flujo básico de creación, lectura, actualización y eliminación de recursos. Este patrón permite organizar el código de manera más limpia y modular, utilizando las vistas basadas en clases (CBV) que Django proporciona.
+
+Las vistas CRUD son esenciales en aplicaciones donde se manejan entidades que se pueden crear, leer, actualizar y eliminar. En lugar de escribir vistas tradicionales de función (FBV) para cada acción, las vistas basadas en clases proporcionan un marco estructurado y reutilizable, lo que facilita el mantenimiento y la ampliación del sistema.
+
+#### **Implementación del patrón**:
+En el archivo `views.py`, se implementaron las vistas CRUD utilizando las vistas basadas en clases (CBV) para manejar las operaciones sobre el modelo `Ticket`. Estas incluyen:
+
+- **ListView** para mostrar todos los tickets.
+- **CreateView** para crear un nuevo ticket.
+- **UpdateView** para editar un ticket existente.
+- **DeleteView** (agregada posteriormente) para eliminar un ticket.
+
+**Código de la vista `TicketListView`:**
+
+```python
+class TicketListView(LoginRequiredMixin, ListView):
+    model = Ticket
+    template_name = 'mainscreen.html'
+    context_object_name = 'tickets'
+```
+
+**Código de la vista `TicketCreateView`:**
+
+```python
+class TicketCreateView(LoginRequiredMixin, CreateView):
+    model = Ticket
+    template_name = 'ticket.html'
+    fields = ['call_time', 'priority', 'discussion', 'state', 'place', 'equipment', 'contact_number', 'contact_name']
+    success_url = reverse_lazy('mainscreen')
+```
+
+**Código de la vista `TicketUpdateView`:**
+
+```python
+class TicketUpdateView(LoginRequiredMixin, UpdateView):
+    model = Ticket
+    template_name = 'more_info.html'
+    fields = ['Support_name', 'first_follow_up', 'second_follow_up', 'third_follow_up', 'state']
+    success_url = reverse_lazy('mainscreen')
+```
+
+**Código de la vista `TicketDeleteView` (agregada posteriormente):**
+
+```python
+class TicketDeleteView(LoginRequiredMixin, DeleteView):
+    model = Ticket
+    template_name = 'ticket_confirm_delete.html'
+    success_url = reverse_lazy('mainscreen')
+```
+
+#### **Mejora en la implementación**:
+El uso de vistas basadas en clases (CBV) permite que la lógica de cada operación CRUD esté organizada de forma modular y reutilizable. Además, la implementación de `TicketDeleteView` completa el patrón CRUD, permitiendo eliminar tickets de manera segura.
+
+
+
+
+
+
