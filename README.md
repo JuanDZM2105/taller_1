@@ -39,7 +39,7 @@ For any inquiries or suggestions, please contact us at camazog1@eafit.edu.co, jd
 
 
 
-## Quality Attributes Analysis
+## Analisis de atributos de calidad
 
 ### 1. Usabilidad
 
@@ -96,4 +96,37 @@ For any inquiries or suggestions, please contact us at camazog1@eafit.edu.co, jd
 - No hay validación de datos antes de guardarlos (ej. en ticket, more_info) → riesgo de inyección o corrupción de datos.
 
 - call_time se convierte desde un string manualmente, lo que puede generar errores o permitir manipulación maliciosa.
+
+
+## Refactorización: Aplicación del Principio de Inversión de Dependencias (DIP) en la vista stadistics
+
+### ¿Qué se cambió?
+Se refactorizó la función de vista stadistics en el archivo views.py para desacoplar la lógica de generación de estadísticas del controlador (view).
+Anteriormente, toda la lógica de negocio (consulta de tickets, generación de estadísticas, creación de gráficas, etc.) estaba directamente implementada dentro de la vista.
+
+Ahora, se ha aplicado el principio de inversión de dependencias dividiendo el código en tres componentes principales:
+
+- Interfaz IStatisticsService (definida en statistics_interface.py) que declara el método generate_statistics.
+
+- Implementación concreta StatisticsService (en statistics_service.py) que implementa la lógica de generación de estadísticas.
+
+- Vista stadistics (en views.py) que ahora delega la lógica al servicio a través de la interfaz.
+
+### ¿Por qué se hizo este cambio?
+Se aplicó este principio por las siguientes razones:
+
+- Desacoplamiento	La vista ya no depende directamente de una clase concreta ni contiene lógica de negocio.
+- Testabilidad	Se facilita la creación de pruebas unitarias, ya que ahora se puede inyectar una implementación mock de IStatisticsService en lugar de depender de datos reales.
+- Reutilización	La lógica de estadísticas puede ser usada en otros contextos (APIs, scripts, tareas programadas) sin duplicar código.
+- Mantenibilidad	Permite modificar o extender la lógica sin tocar la vista, respetando el principio de abierto/cerrado.
+
+### ¿Cómo se implementó?
+- Creación de la interfaz IStatisticsService con el método abstracto generate_statistics.
+
+- Implementación de StatisticsService, que concentra toda la lógica
+
+- Refactorización de la vista stadistics para recibir como dependencia una instancia de IStatisticsService, que por defecto es StatisticsService.
+
+- Organización del código en módulos separados para facilitar su mantenimiento.
+
 
