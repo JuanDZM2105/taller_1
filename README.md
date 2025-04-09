@@ -133,12 +133,11 @@ Se aplicó este principio por las siguientes razones:
 
 ---
 
-# Implementación de Patrones de Diseño en el Proyecto de Django
+## 5.Implementación de Patrones de Diseño en el Proyecto de Django
 
+## Patrones Implementados:
 
-## 1. Patrones Implementados
-
-### 1.1 Normalización de Modelos
+### Normalización de Modelos
 
 #### **Decisión detrás del patrón**:
 La **normalización de modelos** se eligió como patrón para mejorar la estructura de los datos en la base de datos, eliminando redundancias y mejorando la integridad de los datos. En el modelo original de `Ticket`, había campos redundantes como `first_follow_up`, `second_follow_up`, y `third_follow_up`, que se podían gestionar de una manera más eficiente mediante la creación de un modelo separado para los seguimientos.
@@ -174,7 +173,7 @@ La creación del modelo `FollowUp` permite que los seguimientos sean gestionados
 
 ---
 
-### 1.2 Vistas CRUD para Controladores
+### Vistas CRUD para Controladores
 
 #### **Decisión detrás del patrón**:
 El patrón **CRUD para controladores** se eligió porque las vistas de la aplicación siguen un flujo básico de creación, lectura, actualización y eliminación de recursos. Este patrón permite organizar el código de manera más limpia y modular, utilizando las vistas basadas en clases (CBV) que Django proporciona.
