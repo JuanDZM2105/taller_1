@@ -13,11 +13,11 @@ Follow these steps:
 
 ### 1. Clone the project from GitHub:
 ```bash
-git clone https://github.com/jmmunozg1/QTAProject.git
+git clone https://github.com/JuanDZM2105/taller_1.git
 ```
 ### 2. Navigate to the project directory:
 ```bash
-cd QTAProject
+cd taller_1
 ```
 ### 3. Start the server:
 ```bash
@@ -39,7 +39,7 @@ For any inquiries or suggestions, please contact us at camazog1@eafit.edu.co, jd
 
 
 
-## Analisis de atributos de calidad
+## Actividad 2: Analisis de atributos de calidad
 
 ### 1. Usabilidad
 
@@ -98,7 +98,7 @@ For any inquiries or suggestions, please contact us at camazog1@eafit.edu.co, jd
 - call_time se convierte desde un string manualmente, lo que puede generar errores o permitir manipulación maliciosa.
 
 
-## Refactorización: Aplicación del Principio de Inversión de Dependencias (DIP) en la vista stadistics
+## Actividad 3: Refactorización: Aplicación del Principio de Inversión de Dependencias (DIP) en la vista stadistics
 
 ### ¿Qué se cambió?
 Se refactorizó la función de vista stadistics en el archivo views.py para desacoplar la lógica de generación de estadísticas del controlador (view).
@@ -133,7 +133,7 @@ Se aplicó este principio por las siguientes razones:
 
 ---
 
-## 5.Implementación de Patrones de Diseño en el Proyecto de Django
+## Actividad 4 y 5: Implementación de Patrones de Diseño en el Proyecto de Django
 
 ## Patrones Implementados:
 
@@ -176,9 +176,7 @@ La creación del modelo `FollowUp` permite que los seguimientos sean gestionados
 ### Vistas CRUD para Controladores
 
 #### **Decisión detrás del patrón**:
-El patrón **CRUD para controladores** se eligió porque las vistas de la aplicación siguen un flujo básico de creación, lectura, actualización y eliminación de recursos. Este patrón permite organizar el código de manera más limpia y modular, utilizando las vistas basadas en clases (CBV) que Django proporciona.
-
-Las vistas CRUD son esenciales en aplicaciones donde se manejan entidades que se pueden crear, leer, actualizar y eliminar. En lugar de escribir vistas tradicionales de función (FBV) para cada acción, las vistas basadas en clases proporcionan un marco estructurado y reutilizable, lo que facilita el mantenimiento y la ampliación del sistema.
+El patrón **CRUD para controladores** se eligió porque las vistas de la aplicación siguen un flujo básico de creación, lectura, actualización y eliminación de tickets. Antes de esta implementación, las operaciones CRUD de la aplicación se realizaban mediante funciones independientes. Este patrón permite organizar el código de manera más limpia y modular, utilizando las vistas basadas en clases que Django proporciona.
 
 #### **Implementación del patrón**:
 En el archivo `views.py`, se implementaron las vistas CRUD utilizando las vistas basadas en clases (CBV) para manejar las operaciones sobre el modelo `Ticket`. Estas incluyen:
@@ -186,7 +184,6 @@ En el archivo `views.py`, se implementaron las vistas CRUD utilizando las vistas
 - **ListView** para mostrar todos los tickets.
 - **CreateView** para crear un nuevo ticket.
 - **UpdateView** para editar un ticket existente.
-- **DeleteView** (agregada posteriormente) para eliminar un ticket.
 
 **Código de la vista `TicketListView`:**
 
@@ -195,6 +192,26 @@ class TicketListView(LoginRequiredMixin, ListView):
     model = Ticket
     template_name = 'mainscreen.html'
     context_object_name = 'tickets'
+```
+
+**Antes de la implementación del patrón, se tenía lo siguiente:**
+
+```python
+@login_required
+def mainscreen(request):
+    
+    searchState = request.GET.get('searchState')
+    if searchState:
+        tickets = Ticket.objects.filter(state__icontains=searchState)
+    else:
+          tickets = Ticket.objects.all()
+
+    with open('ticketData.csv', "w") as f:
+        f.write(", ".join(['id', 'support', 'person', 'number person', 'place', 'equipment', 'state', 'priority', 'discussion', '1', '2', '3']) + "; \n")
+        for ticket in tickets:
+            f.write(", ".join([ticket.ticket_number, ticket.Support_name, ticket.contact_name, ticket.contact_number, ticket.place, ticket.place, ticket.equipment, ticket.state, ticket.priority, ticket.discussion, ticket.first_follow_up, ticket.second_follow_up, ticket.third_follow_up]) + "; \n")
+
+    return render(request, 'mainscreen.html',{'searchState':searchState, 'tickets':tickets})
 ```
 
 **Código de la vista `TicketCreateView`:**
@@ -206,7 +223,29 @@ class TicketCreateView(LoginRequiredMixin, CreateView):
     fields = ['call_time', 'priority', 'discussion', 'state', 'place', 'equipment', 'contact_number', 'contact_name']
     success_url = reverse_lazy('mainscreen')
 ```
+**Antes de la implementación del patrón, se tenía lo siguiente:**
+```python
+def ticket(request):
+    if request.method == 'POST':
+        ticket_number = request.POST.get('ticket_number')
+        call_time = request.POST.get('call_time')
+        priority = request.POST.get('priority')
+        discussion = request.POST.get('discussion')
+        state = request.POST.get('state')
+        place = request.POST.get('place')
+        equipment = request.POST.get('equipment')
+        contact_number = request.POST.get('contact_number')
+        contact_name = request.POST.get('contact_name')
+        
+        # Crea el nuevo ticket en la base de datos
+        nuevo_ticket = Ticket(ticket_number=Ticket.objects.count()+1, call_time=call_time, priority=priority, discussion=discussion, state=state, place=place, equipment=equipment, contact_number=contact_number, contact_name=contact_name )
+        nuevo_ticket.save()
+        
 
+        return redirect('mainscreen')
+
+    return render(request, 'ticket.html')
+```
 **Código de la vista `TicketUpdateView`:**
 
 ```python
@@ -217,18 +256,49 @@ class TicketUpdateView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('mainscreen')
 ```
 
-**Código de la vista `TicketDeleteView` (agregada posteriormente):**
-
+**Antes de la implementación del patrón, se tenía lo siguiente:**
 ```python
-class TicketDeleteView(LoginRequiredMixin, DeleteView):
-    model = Ticket
-    template_name = 'ticket_confirm_delete.html'
-    success_url = reverse_lazy('mainscreen')
+def more_info(request, id_unico):
+    ticket = get_object_or_404(Ticket, id_unico=id_unico)
+    
+
+    if request.method == 'POST':
+        ticket.call_time = request.POST.get('call_time')
+        ticket.priority = request.POST.get('priority')
+        ticket.discussion = request.POST.get('discussion')
+        ticket.state = request.POST.get('state')
+        ticket.place = request.POST.get('place')
+        ticket.equipment = request.POST.get('equipment')
+        ticket.contact_number = request.POST.get('contact_number')
+        ticket.contact_name = request.POST.get('contact_name')
+        ticket.Support_name = request.POST.get('Support_name')
+        ticket.first_follow_up = request.POST.get('first_follow_up')
+        ticket.second_follow_up = request.POST.get('second_follow_up')
+        ticket.third_follow_up = request.POST.get('third_follow_up')
+        
+        if ticket.state == 'Completed':
+            ticket.time_finish = datetime.datetime.now()
+        
+        # Convertir la fecha a un objeto datetime
+        call_time_datetime = datetime.datetime.strptime(ticket.call_time, '%d-%m-%Y %H:%M:%S')
+
+        # Actualizar el campo call_time con el objeto datetime
+        ticket.call_time = call_time_datetime
+        
+        
+        if request.POST.get('state') == 'Completed':
+            ticket.call_time_finish = datetime.datetime.now()
+            
+        
+        ticket.save()
+        
+        return redirect('mainscreen')
+
+    return render(request, 'more_info.html', {'ticket': ticket})
 ```
 
 #### **Mejora en la implementación**:
-El uso de vistas basadas en clases (CBV) permite que la lógica de cada operación CRUD esté organizada de forma modular y reutilizable. Además, la implementación de `TicketDeleteView` completa el patrón CRUD, permitiendo eliminar tickets de manera segura.
-
+El uso de vistas basadas en clases (CBV) permite que la lógica de cada operación CRUD esté organizada de forma modular y reutilizable. Además, esto hace que el código sea más legible y ordenado.
 
 
 
