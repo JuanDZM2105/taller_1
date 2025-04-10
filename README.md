@@ -37,7 +37,9 @@ If you would like to contribute to this project, follow these steps:
 ## Contact
 For any inquiries or suggestions, please contact us at camazog1@eafit.edu.co, jdzapatam@eafit.edu.co,  jmmunozg1@eafit.edu.co or open an issue on GitHub.
 
+---
 
+# Taller 1: Topicos Especiales en ingenieria de software
 
 ## Actividad 2: Analisis de atributos de calidad
 
